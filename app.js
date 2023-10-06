@@ -13,8 +13,17 @@ app.get('/', (req,res) => {
   res.redirect('/restaurants')
 })
 
-app.get('/restaurants', (req,res) => {
-  res.render('index', {restaurants: restaurants})
+app.get('/restaurants', (req, res) => {
+  const keyword = req.query.keyword ?.trim()
+  const matchedRestaurants = keyword ? restaurants.filter((rs) => 
+    Object.values(rs).some((property) => {
+      if(typeof property === 'string') {
+        return property.toLowerCase().includes(keyword.toLowerCase())
+      }
+      return false
+    })
+  ): restaurants
+  res.render('index', {restaurants: matchedRestaurants, keyword})
 })
 
 app.get('/restaurant/:id', (req,res) => {
